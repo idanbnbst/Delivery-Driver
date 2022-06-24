@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Driver : MonoBehaviour
+public class DriverController : MonoBehaviour
 {
     float steerAmount, moveAmount, nitroAmount;
     [Header("Slow Speeds")]

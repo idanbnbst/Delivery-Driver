@@ -22468,9 +22468,9 @@ GameObject:
   m_Component:
   - component: {fileID: 1971796607}
   - component: {fileID: 1971796606}
-  - component: {fileID: 1971796605}
   - component: {fileID: 1971796609}
   - component: {fileID: 1971796608}
+  - component: {fileID: 1971796605}
   - component: {fileID: 1971796610}
   m_Layer: 0
   m_Name: Schumacher
@@ -22491,10 +22491,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 40e5378d8bdb74e4f901a72d7737c4e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 15
-  steerSpeed: 125
   slowMoveSpeed: 10
   slowSteerSpeed: 100
+  moveSpeed: 15
+  steerSpeed: 125
   boostMoveSpeed: 20
   boostSteerSpeed: 150
   fastMoveSpeed: 22
