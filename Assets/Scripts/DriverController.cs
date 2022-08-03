@@ -33,11 +33,11 @@ public class DriverController : MonoBehaviour
     [SerializeField] int superBikeMoveSpeed = 35;
     [SerializeField] int superBikeSteerSpeed = 250;
     Delivery deliveryVehicle;
-    private void Start()
+    void Start()
     {
         deliveryVehicle = FindObjectOfType<Delivery>();
     }
-    private void Update()
+    void Update()
     {
         steerAmount = Input.GetAxis("Horizontal") * steerSpeed * Time.deltaTime;
         moveAmount = Input.GetAxis("Vertical") * moveSpeed * Time.deltaTime;
@@ -45,7 +45,7 @@ public class DriverController : MonoBehaviour
         transform.Rotate(0, 0, -steerAmount);
         transform.Translate(0, moveAmount + nitroAmount, 0);
     }
-    private void OnCollisionEnter2D(Collision2D other)
+    void OnCollisionEnter2D(Collision2D other)
     {
         if (deliveryVehicle.getNumOfCollisions() > 2)
         {
@@ -74,7 +74,7 @@ public class DriverController : MonoBehaviour
             }
         }
     }
-    private void OnTriggerEnter2D(Collider2D other)
+    void OnTriggerEnter2D(Collider2D other)
     {
         switch (other.tag)
         {
@@ -105,7 +105,7 @@ public class DriverController : MonoBehaviour
                 break;
         }
     }
-    private void OnTriggerExit2D(Collider2D other)
+    void OnTriggerExit2D(Collider2D other)
     {
         switch (other.tag)
         {

@@ -4,17 +4,17 @@ using UnityEngine;
 
 public class Delivery : MonoBehaviour
 {
-    [Header("Vehicle Data")]
     public bool hasPackage;
-    public int vehicleLevel, packageCollected, collisionAllowed, collisionOccured;
-    [SerializeField] float destroyDelay = 0;
+    public int vehicleLevel, packageCollected, collisionOccured;
+    [SerializeField] int collisionAllowed = 3;
+    [SerializeField] float pickupDestroyTime = 0f;
 
     [Header("Quest Colors")]
-    [SerializeField] Color32 hasQuestColor = new Color32(1, 1, 1, 1);
-    [SerializeField] Color32 noQuestColor = new Color32(1, 1, 1, 1);
+    [SerializeField] Color32 hasQuestColor;
+    [SerializeField] Color32 noQuestColor;
     SpriteRenderer spriteRenderer;
     Sprite car1Sprite, car2Sprite, car3Sprite, bike1Sprite, bike2Sprite;
-    private void Start()
+    void Start()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
         car1Sprite = Resources.Load<Sprite>("Car 1");
@@ -23,7 +23,6 @@ public class Delivery : MonoBehaviour
         bike1Sprite = Resources.Load<Sprite>("Motorcycle 1");
         bike2Sprite = Resources.Load<Sprite>("Motorcycle 2");
         vehicleLevel = packageCollected = collisionOccured = 0;
-        collisionAllowed = 5;
     }
     public int getVehicleLevel()
     {
@@ -33,7 +32,7 @@ public class Delivery : MonoBehaviour
     {
         return this.collisionOccured;
     }
-    private void OnCollisionEnter2D(Collision2D other)
+    void OnCollisionEnter2D(Collision2D other)
     {
         collisionOccured++;
         if (vehicleLevel > 0 && collisionOccured == collisionAllowed) // Downgrade vehicle
@@ -61,7 +60,7 @@ public class Delivery : MonoBehaviour
             Debug.Log("It's just a scratch! " + (collisionAllowed - collisionOccured) + " collisions remain");
     }
 
-    private void OnTriggerEnter2D(Collider2D other)
+    void OnTriggerEnter2D(Collider2D other)
     {
         switch (other.tag)
         {
@@ -71,7 +70,7 @@ public class Delivery : MonoBehaviour
                     hasPackage = true;
                     packageCollected++;
                     spriteRenderer.color = hasQuestColor;
-                    Destroy(other.gameObject, destroyDelay);
+                    Destroy(other.gameObject, pickupDestroyTime);
                     Debug.Log("Delivery picked");
                 }
                 break;
