@@ -6,9 +6,8 @@ public class DriverController : MonoBehaviour
     Sprite car1Sprite, car2Sprite, car3Sprite, bike1Sprite, bike2Sprite;
     float steerAmount, moveAmount, nitroAmount;
     [SerializeField] int vehicleLevel = 1;
-    [SerializeField] int deliveryGoal = 2;
     [Header("Collisions")]
-    [SerializeField] int collisionsAllowed = 3;
+    [SerializeField] int collisionsAllowed = 5;
     [SerializeField] int collisionOccured = 0;
     [Header("Current Speeds")]
     [SerializeField] int moveSpeed = 15;
@@ -61,16 +60,14 @@ public class DriverController : MonoBehaviour
     {
         return collisionsAllowed - collisionOccured;
     }
-    void ModifyVehicle(int level, Sprite skin, int move, int steer, int newGoal, string message)
+    void ModifyVehicle(int level, Sprite skin, int move, int steer, int newGoal)
     {
         vehicleLevel += level;
         collisionOccured = 0;
         spriteRenderer.sprite = skin;
         moveSpeed = move;
         steerSpeed = steer;
-        deliveryGoal = newGoal;
-        if (!message.Equals(string.Empty))
-            Debug.Log(message);
+        delivery.DeliveryGoal = newGoal;
     }
     void BoostVehicleSpeed()
     {
@@ -107,28 +104,28 @@ public class DriverController : MonoBehaviour
         switch (vehicleLevel)
         {
             case 2:
-                ModifyVehicle(-1, car1Sprite, slowMoveSpeed + 3, slowSteerSpeed + 15, 2,
-                "Vehicle has been downgraded to level " + vehicleLevel);
+                ModifyVehicle(-1, car1Sprite, slowMoveSpeed + 3, slowSteerSpeed + 15, 2);
+                Debug.Log("Vehicle has been downgraded to level " + vehicleLevel);
                 break;
 
             case 3:
-                ModifyVehicle(-1, car2Sprite, slowMoveSpeed + 7, slowSteerSpeed + 30, 5,
-                    "Vehicle has been downgraded to level " + vehicleLevel);
+                ModifyVehicle(-1, car2Sprite, slowMoveSpeed + 7, slowSteerSpeed + 30, 5);
+                Debug.Log("Vehicle has been downgraded to level " + vehicleLevel);
                 break;
 
             case 4:
-                ModifyVehicle(-1, car3Sprite, boostMoveSpeed, boostSteerSpeed, 10,
-                    "Vehicle has been downgraded to level " + vehicleLevel);
+                ModifyVehicle(-1, car3Sprite, boostMoveSpeed, boostSteerSpeed, 10);
+                Debug.Log("Vehicle has been downgraded to level " + vehicleLevel);
                 break;
 
             case 5:
-                ModifyVehicle(-1, bike1Sprite, fastMoveSpeed, fastSteerSpeed, 18,
-                    "Vehicle has been downgraded to level " + vehicleLevel);
+                ModifyVehicle(-1, bike1Sprite, fastMoveSpeed, fastSteerSpeed, 18);
+                Debug.Log("Vehicle has been downgraded to level " + vehicleLevel);
                 break;
 
             default:
-                ModifyVehicle(0, car1Sprite, slowMoveSpeed, slowSteerSpeed, 2,
-                "Maximum collisions have been reached. Car is broken!");
+                ModifyVehicle(0, car1Sprite, slowMoveSpeed, slowSteerSpeed, 2);
+                Debug.Log("Maximum collisions have been reached. Car is broken!");
                 break;
         }
     }
@@ -137,23 +134,23 @@ public class DriverController : MonoBehaviour
         switch (vehicleLevel)
         {
             case 2:
-                ModifyVehicle(1, car3Sprite, superMoveSpeed, superSteerSpeed, 10,
-                "Vehicle has been upgraded to level " + vehicleLevel);
+                ModifyVehicle(1, car3Sprite, superMoveSpeed, superSteerSpeed, 10);
+                Debug.Log("Vehicle has been upgraded to level " + vehicleLevel);
                 break;
 
             case 3:
-                ModifyVehicle(1, bike1Sprite, bikeMoveSpeed, bikeSteerSpeed, 18,
-                "Vehicle has been upgraded to level " + vehicleLevel);
+                ModifyVehicle(1, bike1Sprite, bikeMoveSpeed, bikeSteerSpeed, 18);
+                Debug.Log("Vehicle has been upgraded to level " + vehicleLevel);
                 break;
 
             case 4:
-                ModifyVehicle(1, bike2Sprite, superBikeMoveSpeed, superBikeSteerSpeed, 25,
-                "Vehicle has been upgraded to level " + vehicleLevel);
+                ModifyVehicle(1, bike2Sprite, superBikeMoveSpeed, superBikeSteerSpeed, 25);
+                Debug.Log("Vehicle has been upgraded to level " + vehicleLevel);
                 break;
 
             default:
-                ModifyVehicle(1, car2Sprite, fastMoveSpeed, fastSteerSpeed, 5,
-                "Vehicle has been upgraded to level " + vehicleLevel);
+                ModifyVehicle(1, car2Sprite, fastMoveSpeed, fastSteerSpeed, 5);
+                Debug.Log("Vehicle has been upgraded to level " + vehicleLevel);
                 break;
         }
     }
@@ -164,11 +161,18 @@ public class DriverController : MonoBehaviour
         if (HasReachedMaxCollisions())
         {
             Downgrade();
-            delivery.Delivered = 0;
+            CollisionPenalty();
         }
         else
             Debug.Log("It's just a scratch! " + CollisionsRemainded() + " collisions left.");
     }
+
+    void CollisionPenalty()
+    {
+        int penalty = delivery.Delivered + (delivery.DeliveryGoal / 2);
+        delivery.DeliveryGoal = penalty;
+    }
+
     void OnTriggerEnter2D(Collider2D other)
     {
         switch (other.tag)
@@ -183,7 +187,7 @@ public class DriverController : MonoBehaviour
         switch (other.tag)
         {
             case "Customer":
-                if (delivery.Delivered >= deliveryGoal)
+                if (delivery.Delivered >= delivery.DeliveryGoal)
                     Upgrade();
                 break;
         }
