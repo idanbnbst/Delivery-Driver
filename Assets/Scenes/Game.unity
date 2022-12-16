@@ -2343,7 +2343,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 593181551}
-  m_RootOrder: 5
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: -90}
 --- !u!50 &184782522
 Rigidbody2D:
@@ -3509,7 +3509,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 593181551}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!50 &346201765
 Rigidbody2D:
@@ -6482,7 +6482,6 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 1971796607}
   - {fileID: 1910212491}
   - {fileID: 346201764}
   - {fileID: 1577222963}
@@ -9117,7 +9116,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 593181551}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: -90}
 --- !u!50 &792491415
 Rigidbody2D:
@@ -14567,7 +14566,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 593181551}
-  m_RootOrder: 6
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 90}
 --- !u!212 &1293226438
 SpriteRenderer:
@@ -14961,7 +14960,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1330085347}
   m_LocalRotation: {x: -0, y: -0, z: -0.7071068, w: 0.7071068}
-  m_LocalPosition: {x: 46.71, y: -6.81, z: 0}
+  m_LocalPosition: {x: 46.67, y: -6.85, z: 0}
   m_LocalScale: {x: 2.0652678, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 470890301}
@@ -17694,7 +17693,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 593181551}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: -90}
 --- !u!50 &1577222964
 Rigidbody2D:
@@ -17828,7 +17827,7 @@ Transform:
   - {fileID: 1551324217}
   - {fileID: 365033966}
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1596878753
 GameObject:
@@ -21663,7 +21662,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 593181551}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!50 &1910212492
 Rigidbody2D:
@@ -22172,23 +22171,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 40e5378d8bdb74e4f901a72d7737c4e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  vehicleLevel: 1
-  collisionsAllowed: 5
+  specs:
+  - {fileID: 11400000, guid: 7bf9731f2c8f6f84ab712539445af297, type: 2}
+  - {fileID: 11400000, guid: 29aa4bb8d5e467e44956230542c78c88, type: 2}
+  - {fileID: 11400000, guid: 4b2139755154081429c0a90fee0d68ec, type: 2}
+  - {fileID: 11400000, guid: be8148fb836f48a4fb61ba5df4411cd8, type: 2}
+  - {fileID: 11400000, guid: e157293cae1aef84789258659b68baca, type: 2}
+  vehicleLevel: 0
   collisionOccured: 0
-  moveSpeed: 15
-  steerSpeed: 125
-  slowMoveSpeed: 10
-  slowSteerSpeed: 100
-  boostMoveSpeed: 20
-  boostSteerSpeed: 150
-  fastMoveSpeed: 22
-  fastSteerSpeed: 170
-  superMoveSpeed: 25
-  superSteerSpeed: 190
-  bikeMoveSpeed: 30
-  bikeSteerSpeed: 200
-  superBikeMoveSpeed: 35
-  superBikeSteerSpeed: 250
+  collisionsAllowed: 0
+  numOfBlinks: 3
+  blinkDuration: 0.25
+  moveSpeed: 0
+  steerSpeed: 0
 --- !u!212 &1971796606
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -22251,8 +22246,8 @@ Transform:
   m_LocalPosition: {x: 3.3, y: 10.6, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 593181551}
-  m_RootOrder: 0
+  m_Father: {fileID: 0}
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 90}
 --- !u!50 &1971796608
 Rigidbody2D:
@@ -22315,6 +22310,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   inProgress: 0
   deliveryGoal: 2
+  delivered: 0
   totalDelivered: 0
   pickupDestroyTime: 0
   defaultColor:
