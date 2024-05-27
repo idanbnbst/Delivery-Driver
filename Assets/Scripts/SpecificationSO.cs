@@ -7,6 +7,8 @@ public class SpecificationSO : ScriptableObject
     [SerializeField] Sprite skin;
     [SerializeField] int moveSpeed;
     [SerializeField] int steerSpeed;
+    [SerializeField] float nitroCapacity;
+    [SerializeField] float nitroCooldown;
     [SerializeField] int deliveryGoal;
     [SerializeField] int collisionsAllowed;
     public string GetModel()
@@ -28,6 +30,14 @@ public class SpecificationSO : ScriptableObject
     public int GetSteerSpeed()
     {
         return steerSpeed;
+    }
+    public float GetNitroCapacity()
+    {
+        return nitroCapacity;
+    }
+    public float GetNitroCooldown()
+    {
+        return nitroCooldown;
     }
     public int GetDeliveryGoal()
     {

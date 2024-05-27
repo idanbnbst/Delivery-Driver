@@ -12,11 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 80400d1bf5f7faa479e485fe10525bf6, type: 3}
   m_Name: Basic
   m_EditorClassIdentifier: 
-  category: Basic
   model: Station
   level: 0
   skin: {fileID: 21300000, guid: 6fba76a814db5fb4690ac0e48cd43cd4, type: 3}
   moveSpeed: 15
   steerSpeed: 125
+  nitroCapacity: 0
+  nitroCooldown: 0
   deliveryGoal: 2
   collisionsAllowed: 0

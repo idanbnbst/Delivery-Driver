@@ -1,11 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-public class DriverController : MonoBehaviour
+public class VehicleController : MonoBehaviour
 {
     Delivery delivery;
     SpriteRenderer spriteRenderer;
     [SerializeField] List<SpecificationSO> specs;
+    SpecificationSO currentSpec;
     float steerAmount, moveAmount, nitroAmount;
     [SerializeField] int vehicleLevel;
     [Header("Collisions")]
@@ -16,65 +17,103 @@ public class DriverController : MonoBehaviour
     [Header("Speeds")]
     [SerializeField] int moveSpeed;
     [SerializeField] int steerSpeed;
+    [SerializeField] float nitroCapacity;
+    [SerializeField] float nitroCooldown;
     void Start()
     {
         delivery = FindObjectOfType<Delivery>();
         spriteRenderer = GetComponent<SpriteRenderer>();
-        ModifyVehicle(0);
+        ModifyVehicle(1);
     }
     void Update()
     {
         steerAmount = Input.GetAxis("Horizontal") * steerSpeed * Time.deltaTime;
         moveAmount = Input.GetAxis("Vertical") * moveSpeed * Time.deltaTime;
-        nitroAmount = Input.GetAxis("Fire1") * (moveSpeed / 2) * Time.deltaTime;
-        transform.Rotate(0, 0, -steerAmount);
-        transform.Translate(0, moveAmount + nitroAmount, 0);
+        if (moveAmount > 0) // Enable vehicle steering only if the player is moving the car forward
+        {
+            transform.Rotate(0, 0, -steerAmount);
+            nitroAmount = Input.GetAxis("Fire1") * (moveSpeed * 0.75f) * Time.deltaTime;
+            HandleNitroInput();
+        }
+        else if (nitroAmount != 0)
+            nitroAmount = 0;
+
+        CooldownNitro();
+        moveAmount += nitroAmount;
+        transform.Translate(0, moveAmount, 0);
     }
-    bool HasReachedMaxCollisions()
+
+    void HandleNitroInput()
+    {
+        if (nitroAmount != 0 && currentSpec.GetNitroCapacity() > 0)
+            ActivateNitro();
+        else if (currentSpec.GetNitroCapacity() <= 0)
+            nitroAmount = 0;
+    }
+
+    void ActivateNitro()
+    {
+        if (nitroCapacity > 0 && nitroCooldown > 0)
+            nitroCapacity -= Time.deltaTime;
+        else if (nitroCooldown <= 0) // Reset nitro capacity and nitro cooldown timer when cooldown has reached
+        {
+            nitroCapacity = currentSpec.GetNitroCapacity();
+            nitroCooldown = currentSpec.GetNitroCooldown();
+        }
+    }
+    void CooldownNitro()
+    {
+        if (nitroCapacity <= 0 && nitroCooldown > 0)
+        {
+            nitroAmount = 0;
+            nitroCooldown -= Time.deltaTime;
+        }
+    }
+    bool MaxCollisionsExceeded()
     {
         return collisionOccured == collisionsAllowed;
     }
-    int CollisionsRemainded()
+    bool DeliveryGoalReached()
     {
-        return collisionsAllowed - collisionOccured;
+        return delivery.Delivered == delivery.DeliveryGoal;
     }
-    void ModifyVehicle(int level, Sprite skin, int move, int steer, int newGoal)
+    void ModifyVehicle(int level, Sprite skin, int move, int steer, float capacity, float cooldown, int newGoal)
     {
         collisionOccured = 0;
         vehicleLevel += level;
         spriteRenderer.sprite = skin;
         moveSpeed = move;
         steerSpeed = steer;
+        nitroCapacity = capacity;
+        nitroCooldown = cooldown;
         delivery.DeliveryGoal = newGoal;
+    }
+    void SetSpecAttributes(SpecificationSO spec)
+    {
+        currentSpec = spec;
+        vehicleLevel = spec.GetLevel();
+        spriteRenderer.sprite = spec.GetSkin();
+        moveSpeed = spec.GetMoveSpeed();
+        steerSpeed = spec.GetSteerSpeed();
+        nitroCapacity = spec.GetNitroCapacity();
+        nitroCooldown = spec.GetNitroCooldown();
+        delivery.DeliveryGoal = spec.GetDeliveryGoal();
+        collisionsAllowed = spec.GetCollisionsAllowed();
+        collisionOccured = 0;
     }
     void ModifyVehicle(int level)
     {
         SpecificationSO spec = GetVehicleSpecByIndex(level);
         if (spec)
-        {
-            vehicleLevel = spec.GetLevel();
-            spriteRenderer.sprite = spec.GetSkin();
-            moveSpeed = spec.GetMoveSpeed();
-            steerSpeed = spec.GetSteerSpeed();
-            delivery.DeliveryGoal = spec.GetDeliveryGoal();
-            collisionsAllowed = spec.GetCollisionsAllowed();
-            collisionOccured = 0;
-        }
+            SetSpecAttributes(spec);
     }
     void ModifyVehicle(string model)
     {
-        collisionOccured = 0;
         SpecificationSO spec = GetVehicleSpecByModel(model);
         if (spec)
-        {
-            vehicleLevel = spec.GetLevel();
-            spriteRenderer.sprite = spec.GetSkin();
-            moveSpeed = spec.GetMoveSpeed();
-            steerSpeed = spec.GetSteerSpeed();
-            delivery.DeliveryGoal = spec.GetDeliveryGoal();
-        }
+            SetSpecAttributes(spec);
     }
-    void Downgrade()
+    void DowngradeVehicle()
     {
         if (vehicleLevel == 0)
             return;
@@ -82,12 +121,12 @@ public class DriverController : MonoBehaviour
         delivery.Init();
         ModifyVehicle(vehicleLevel - 1);
     }
-    void Upgrade()
+    void UpgradeVehicle()
     {
         delivery.Init();
         ModifyVehicle(vehicleLevel + 1);
     }
-    void CollisionPenalty()
+    void SetCollisionPenalty()
     {
         int penalty = (int)(delivery.DeliveryGoal / 2);
         delivery.DeliveryGoal += penalty;
@@ -108,11 +147,11 @@ public class DriverController : MonoBehaviour
     {
         collisionOccured++;
 
-        if (HasReachedMaxCollisions())
+        if (MaxCollisionsExceeded())
         {
             StartCoroutine("Blink");
-            Downgrade();
-            CollisionPenalty();
+            DowngradeVehicle();
+            SetCollisionPenalty();
         }
     }
     void OnTriggerEnter2D(Collider2D other)
@@ -128,8 +167,8 @@ public class DriverController : MonoBehaviour
         switch (other.tag)
         {
             case "Customer":
-                if (delivery.Delivered >= delivery.DeliveryGoal)
-                    Upgrade();
+                if (DeliveryGoalReached())
+                    UpgradeVehicle();
                 break;
         }
     }
