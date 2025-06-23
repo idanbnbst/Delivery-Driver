@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-public class DriverController : MonoBehaviour
+public class VehicleController : MonoBehaviour
 {
     Delivery delivery;
     SpriteRenderer spriteRenderer;
@@ -9,45 +9,53 @@ public class DriverController : MonoBehaviour
     SpecificationSO currentSpec;
     float steerAmount, moveAmount, nitroAmount;
     [SerializeField] int vehicleLevel;
+
+    [Header("Drive Control")]
+    [SerializeField] int moveSpeed;
+    [SerializeField] int steerSpeed;
+    [SerializeField] float nitroCapacity;
+    [SerializeField] float nitroCooldown;
+
     [Header("Collisions")]
     [SerializeField] int collisionOccured;
     [SerializeField] int collisionsAllowed;
     [SerializeField] int numOfBlinks = 3;
     [SerializeField] float blinkDuration = 0.25f;
-    [Header("Speeds")]
-    [SerializeField] int moveSpeed;
-    [SerializeField] int steerSpeed;
-    [SerializeField] float nitroCapacity;
-    [SerializeField] float nitroCooldown;
     void Start()
     {
         delivery = FindObjectOfType<Delivery>();
         spriteRenderer = GetComponent<SpriteRenderer>();
-        ModifyVehicle(1);
+        ModifyVehicle(0);
     }
     void Update()
     {
         steerAmount = Input.GetAxis("Horizontal") * steerSpeed * Time.deltaTime;
         moveAmount = Input.GetAxis("Vertical") * moveSpeed * Time.deltaTime;
-        if (moveAmount > 0) // Enable vehicle steering only if the player is moving the car forward
+        if (moveAmount != 0) // Enable steering only when vehicle is moving
         {
             transform.Rotate(0, 0, -steerAmount);
 
-            nitroAmount = Input.GetAxis("Fire1") * (moveSpeed * 0.75f) * Time.deltaTime;
-            if (nitroAmount != 0 && currentSpec.GetNitroCapacity() > 0)
+            if (moveAmount > 0) // Only when vehicle moves forward
+            {
+                nitroAmount = Input.GetAxis("Fire1") * (moveSpeed * 0.75f) * Time.deltaTime;
                 HandleNitroInput();
-            else
-                nitroAmount = 0;
+            }
         }
-        else
+        else if (nitroAmount != 0) // Stop nitro when vehicle is not moving
             nitroAmount = 0;
 
-        if (currentSpec.GetNitroCooldown() > 0)
-            HandleNitroCooldown();
-
-        transform.Translate(0, moveAmount + nitroAmount, 0);
+        CooldownNitro();
+        moveAmount += nitroAmount;
+        transform.Translate(0, moveAmount, 0);
     }
     void HandleNitroInput()
+    {
+        if (currentSpec.GetNitroCapacity() <= 0)
+            nitroAmount = 0;
+        else if (nitroAmount != 0)
+            ActivateNitro();
+    }
+    void ActivateNitro()
     {
         if (nitroCapacity > 0 && nitroCooldown > 0)
             nitroCapacity -= Time.deltaTime;
@@ -57,7 +65,7 @@ public class DriverController : MonoBehaviour
             nitroCooldown = currentSpec.GetNitroCooldown();
         }
     }
-    void HandleNitroCooldown()
+    void CooldownNitro()
     {
         if (nitroCapacity <= 0 && nitroCooldown > 0)
         {
@@ -71,7 +79,7 @@ public class DriverController : MonoBehaviour
     }
     bool DeliveryGoalReached()
     {
-        return delivery.Delivered == delivery.DeliveryGoal;
+        return delivery.Delivered >= delivery.DeliveryGoal;
     }
     void ModifyVehicle(int level, Sprite skin, int move, int steer, float capacity, float cooldown, int newGoal)
     {
@@ -99,7 +107,7 @@ public class DriverController : MonoBehaviour
     }
     void ModifyVehicle(int level)
     {
-        SpecificationSO spec = GetVehicleSpecByIndex(level);
+        SpecificationSO spec = GetVehicleSpecByLevel(level);
         if (spec)
             SetSpecAttributes(spec);
     }
@@ -167,10 +175,6 @@ public class DriverController : MonoBehaviour
                     UpgradeVehicle();
                 break;
         }
-    }
-    SpecificationSO GetVehicleSpecByIndex(int index)
-    {
-        return specs[index];
     }
     SpecificationSO GetVehicleSpecByLevel(int level)
     {

@@ -17,7 +17,7 @@ MonoBehaviour:
   skin: {fileID: 21300000, guid: de776ce7282caef4aa2a9570463dbd19, type: 3}
   moveSpeed: 35
   steerSpeed: 300
-  nitroCapacity: 15
+  nitroCapacity: 5
   nitroCooldown: 30
   deliveryGoal: 15
   collisionsAllowed: 10

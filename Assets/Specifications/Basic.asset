@@ -19,5 +19,5 @@ MonoBehaviour:
   steerSpeed: 125
   nitroCapacity: 0
   nitroCooldown: 0
-  deliveryGoal: 2
+  deliveryGoal: 3
   collisionsAllowed: 0
